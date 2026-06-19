@@ -1,8 +1,30 @@
-# P vs NP Discovery GUI
+# P vs NP Studio — Module Runner GUI
 
-This project discovers the installed `p-vs-np` package and builds a GUI from the discovered inventory.
+This version is built for the actual `p-vs-np` package structure.
 
-## 1. Install
+It treats the 361 problem files as runnable scripts instead of normal importable functions.
+
+## Why
+
+The package contains categories like:
+
+```text
+database_problems: 203
+flow_problems: 64
+graph_theory: 65
+network_design: 29
+TOTAL: 361
+```
+
+Many files have names that are not clean Python import names, so this app runs by file path using:
+
+```python
+runpy.run_path(path, run_name="__main__")
+```
+
+inside a subprocess.
+
+## Install
 
 ```bash
 python3 -m venv .venv
@@ -10,24 +32,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 2. Discover the package
+## Discover modules
 
 ```bash
-python scripts/discover_p_vs_np.py
+python scripts/discover_modules.py
 ```
 
-This creates:
-
-```text
-inventory/
-├── summary.json
-├── modules.json
-├── functions.json
-├── classes.json
-└── capabilities.json
-```
-
-## 3. Run the GUI
+## Run GUI
 
 ```bash
 uvicorn backend.main:app --reload
@@ -39,21 +50,17 @@ Open:
 http://127.0.0.1:8000
 ```
 
-## What this version does
+## Features
 
-- Imports the installed package.
-- Walks submodules.
-- Extracts modules, functions, classes, signatures, and docstrings.
-- Infers rough categories and visualizer types.
-- Builds a universal capability dashboard.
-- Runs selected functions/classes with JSON arguments.
-- Performs a no-argument smoke test batch.
+- Discovers all problem `.py` files.
+- Groups them by category.
+- Runs selected modules.
+- Captures stdout/stderr/errors/runtime.
+- Shows source code.
+- Runs first 25 modules in a category.
+- Avoids import-name problems by using file-path execution.
 
-## Important
+## Notes for Pyto
 
-This version does not assume the package API. It discovers the real structure first.
-If the import name is not `p_vs_np`, edit `PACKAGE_CANDIDATES` in:
-
-```text
-scripts/discover_p_vs_np.py
-```
+Pyto may support the discovery and module running scripts directly.
+The FastAPI GUI may be easier on desktop or a Python web host.

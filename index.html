@@ -2,63 +2,394 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>P vs NP Universal Capability GUI</title>
+<title>P vs NP Studio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/static/styles.css">
+<style>
+:root {
+  --bg: #0f172a;
+  --panel: #111827;
+  --panel2: #1f2937;
+  --line: #334155;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #2563eb;
+  --good: #14532d;
+  --bad: #7f1d1d;
+  --warn: #78350f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+header {
+  padding: 18px 24px;
+  background: #020617;
+  border-bottom: 1px solid var(--line);
+}
+header h1 { margin: 0 0 4px; font-size: 22px; }
+header p { margin: 0; color: var(--muted); }
+main {
+  display: grid;
+  grid-template-columns: 390px 1fr;
+  gap: 14px;
+  padding: 14px;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  min-width: 0;
+}
+.sidebar, .workspace {
+  height: calc(100vh - 96px);
+  overflow: auto;
+}
+.notice {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+.notice.good { background: var(--good); }
+.notice.bad { background: var(--bad); }
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.metric {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+}
+.metric span {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+}
+.metric label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #020617;
+  color: var(--text);
+}
+button {
+  background: var(--accent);
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+.module {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+.module:hover { background: var(--panel2); }
+.module-title { font-weight: 750; }
+.module-sub { color: var(--muted); font-size: 12px; word-break: break-word; }
+.badge {
+  display: inline-block;
+  margin: 3px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #334155;
+  font-size: 12px;
+}
+.badge.good { background: var(--good); }
+.badge.bad { background: var(--bad); }
+.badge.warn { background: var(--warn); }
+pre {
+  white-space: pre-wrap;
+  overflow: auto;
+  background: #020617;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+.tabs button {
+  width: auto;
+  background: #334155;
+}
+.tabs button.active { background: var(--accent); }
+.tab { display: none; }
+.tab.active { display: block; }
+.category-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+.small { color: var(--muted); font-size: 13px; }
+@media (max-width: 960px) {
+  main { grid-template-columns: 1fr; }
+  .sidebar, .workspace { height: auto; }
+}
+</style>
 </head>
 
 <body>
 <header>
-  <h1>P vs NP Universal Capability GUI</h1>
-  <p>Discovery-driven dashboard for the installed <code>p-vs-np</code> package.</p>
+  <h1>P vs NP Studio</h1>
+  <p>Module-based GUI for the 361-file <code>p-vs-np</code> package universe.</p>
 </header>
 
 <main>
   <aside class="panel sidebar">
-    <h2>Inventory</h2>
+    <div id="notice" class="notice">Checking backend...</div>
+
+    <h2>Universe</h2>
     <div class="metrics">
-      <div><span id="moduleCount">0</span><label>Modules</label></div>
-      <div><span id="functionCount">0</span><label>Functions</label></div>
-      <div><span id="classCount">0</span><label>Classes</label></div>
-      <div><span id="capabilityCount">0</span><label>Capabilities</label></div>
+      <div class="metric"><span id="totalModules">0</span><label>Total modules</label></div>
+      <div class="metric"><span id="databaseCount">0</span><label>Database</label></div>
+      <div class="metric"><span id="flowCount">0</span><label>Flow</label></div>
+      <div class="metric"><span id="graphCount">0</span><label>Graph</label></div>
+      <div class="metric"><span id="networkCount">0</span><label>Network</label></div>
     </div>
 
     <h2>Controls</h2>
-    <input id="search" placeholder="Search capability...">
-    <select id="categoryFilter">
+    <input id="search" placeholder="Search module...">
+    <select id="category">
       <option value="all">All categories</option>
+      <option value="database_problems">database_problems</option>
+      <option value="flow_problems">flow_problems</option>
+      <option value="graph_theory">graph_theory</option>
+      <option value="network_design">network_design</option>
     </select>
-    <select id="visualizerFilter">
-      <option value="all">All visualizers</option>
-    </select>
-    <button id="smokeBtn">Run No-Arg Smoke Test</button>
+    <button id="runCategoryBtn">Run First 25 In Category</button>
 
-    <h2>Capabilities</h2>
-    <div id="capabilityList"></div>
+    <h2>Modules</h2>
+    <div id="moduleList"></div>
   </aside>
 
   <section class="panel workspace">
-    <h2 id="selectedName">Select a capability</h2>
-    <div id="badges"></div>
+    <h2 id="selectedTitle">Select a module</h2>
+    <div id="meta"></div>
 
-    <h3>Signature</h3>
-    <pre id="signature"></pre>
+    <div class="tabs">
+      <button class="tabBtn active" data-tab="runTab">Run</button>
+      <button class="tabBtn" data-tab="sourceTab">Source</button>
+      <button class="tabBtn" data-tab="mapTab">Capability Map</button>
+      <button class="tabBtn" data-tab="batchTab">Batch Results</button>
+    </div>
 
-    <h3>Documentation</h3>
-    <pre id="doc"></pre>
+    <section id="runTab" class="tab active">
+      <button id="runBtn">Run Selected Module</button>
+      <pre id="output">No run yet.</pre>
+    </section>
 
-    <h3>Runner</h3>
-    <p class="small">Arguments must be JSON arrays. Keyword arguments must be a JSON object.</p>
-    <textarea id="argsInput" placeholder='Args JSON, e.g. [[[0,1],[1,0]], 2]'></textarea>
-    <textarea id="kwargsInput" placeholder='Kwargs JSON, e.g. {"k": 3}'></textarea>
-    <button id="runBtn">Run Selected</button>
-    <pre id="runOutput"></pre>
+    <section id="sourceTab" class="tab">
+      <button id="loadSourceBtn">Load Source</button>
+      <pre id="sourceView">No source loaded.</pre>
+    </section>
 
-    <h3>Capability Map</h3>
-    <div id="map"></div>
+    <section id="mapTab" class="tab">
+      <div id="map"></div>
+    </section>
+
+    <section id="batchTab" class="tab">
+      <pre id="batchOutput">No batch run yet.</pre>
+    </section>
   </section>
 </main>
 
-<script src="/static/app.js"></script>
+<script>
+let modules = [];
+let selected = null;
+
+const $ = id => document.getElementById(id);
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[ch]));
+}
+
+async function getJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} failed with ${res.status}`);
+  return await res.json();
+}
+
+function setMetric(id, value) {
+  $(id).textContent = value || 0;
+}
+
+function renderSummary(summary) {
+  setMetric("totalModules", summary.total);
+  setMetric("databaseCount", summary.categories?.database_problems);
+  setMetric("flowCount", summary.categories?.flow_problems);
+  setMetric("graphCount", summary.categories?.graph_theory);
+  setMetric("networkCount", summary.categories?.network_design);
+}
+
+function renderList() {
+  const q = $("search").value.toLowerCase();
+  const cat = $("category").value;
+  const list = $("moduleList");
+  list.innerHTML = "";
+
+  const filtered = modules.filter(m => {
+    const text = `${m.title} ${m.id} ${m.filename}`.toLowerCase();
+    return text.includes(q) && (cat === "all" || m.category === cat);
+  });
+
+  for (const m of filtered) {
+    const div = document.createElement("div");
+    div.className = "module";
+    div.innerHTML = `
+      <div class="module-title">${escapeHtml(m.title)}</div>
+      <div class="module-sub">${escapeHtml(m.filename)}</div>
+      <span class="badge">${escapeHtml(m.category)}</span>
+      <span class="badge">${m.source_lines} lines</span>
+      ${m.has_input ? '<span class="badge warn">input()</span>' : ''}
+      ${m.has_print ? '<span class="badge good">prints</span>' : ''}
+    `;
+    div.onclick = () => selectModule(m);
+    list.appendChild(div);
+  }
+}
+
+function selectModule(m) {
+  selected = m;
+  $("selectedTitle").textContent = m.title;
+  $("meta").innerHTML = `
+    <span class="badge">${escapeHtml(m.id)}</span>
+    <span class="badge">${escapeHtml(m.category)}</span>
+    <span class="badge">${escapeHtml(m.filename)}</span>
+    <span class="badge">${m.source_lines} lines</span>
+  `;
+  $("output").textContent = "Ready to run.";
+  $("sourceView").textContent = "No source loaded.";
+}
+
+async function runSelected() {
+  if (!selected) {
+    $("output").textContent = "No module selected.";
+    return;
+  }
+
+  $("output").textContent = "Running...";
+  const res = await fetch("/api/run", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({id: selected.id, timeout: 8})
+  });
+  const data = await res.json();
+  $("output").textContent = JSON.stringify(data, null, 2);
+}
+
+async function loadSource() {
+  if (!selected) {
+    $("sourceView").textContent = "No module selected.";
+    return;
+  }
+
+  const data = await getJson(`/api/source/${encodeURIComponent(selected.id)}`);
+  $("sourceView").textContent = data.source || JSON.stringify(data, null, 2);
+}
+
+async function runCategory() {
+  const cat = $("category").value;
+  if (cat === "all") {
+    $("batchOutput").textContent = "Choose a category first.";
+    return;
+  }
+
+  $("batchOutput").textContent = `Running first 25 modules in ${cat}...`;
+  const res = await fetch(`/api/run-category/${cat}?limit=25&timeout=8`, {method: "POST"});
+  const data = await res.json();
+  $("batchOutput").textContent = JSON.stringify(data, null, 2);
+  showTab("batchTab");
+}
+
+function renderMap() {
+  const grouped = {};
+  for (const m of modules) {
+    grouped[m.category] ??= [];
+    grouped[m.category].push(m);
+  }
+
+  const map = $("map");
+  map.innerHTML = "";
+
+  for (const [category, items] of Object.entries(grouped)) {
+    const card = document.createElement("div");
+    card.className = "category-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(category)}</strong>
+      <span class="badge">${items.length} modules</span>
+      <div class="small">${items.slice(0, 12).map(x => escapeHtml(x.title)).join(", ")}${items.length > 12 ? "..." : ""}</div>
+    `;
+    map.appendChild(card);
+  }
+}
+
+function showTab(id) {
+  for (const b of document.querySelectorAll(".tabBtn")) b.classList.remove("active");
+  for (const t of document.querySelectorAll(".tab")) t.classList.remove("active");
+
+  document.querySelector(`[data-tab="${id}"]`)?.classList.add("active");
+  $(id).classList.add("active");
+}
+
+async function init() {
+  try {
+    await getJson("/api/health");
+    $("notice").className = "notice good";
+    $("notice").textContent = "Backend connected.";
+  } catch {
+    $("notice").className = "notice bad";
+    $("notice").innerHTML = "Backend not connected. Run <code>uvicorn backend.main:app --reload</code>.";
+    return;
+  }
+
+  const summary = await getJson("/api/summary");
+  renderSummary(summary);
+
+  if (summary.error) {
+    $("notice").className = "notice bad";
+    $("notice").innerHTML = "Inventory missing. Run <code>python scripts/discover_modules.py</code> first.";
+  }
+
+  modules = await getJson("/api/modules");
+  renderList();
+  renderMap();
+
+  if (modules.length) selectModule(modules[0]);
+}
+
+$("search").oninput = renderList;
+$("category").onchange = renderList;
+$("runBtn").onclick = runSelected;
+$("loadSourceBtn").onclick = loadSource;
+$("runCategoryBtn").onclick = runCategory;
+
+for (const btn of document.querySelectorAll(".tabBtn")) {
+  btn.onclick = () => showTab(btn.dataset.tab);
+}
+
+init();
+</script>
 </body>
 </html>
