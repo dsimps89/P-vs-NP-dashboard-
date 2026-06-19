@@ -1,96 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>P vs NP Studio</title>
 
 <style>
+
 body{
-    font-family:Arial,sans-serif;
-    margin:20px;
+    font-family:Arial,Helvetica,sans-serif;
+    margin:0;
+    background:#0f172a;
+    color:white;
 }
 
-#search{
+header{
+    padding:20px;
+    background:#020617;
+}
+
+.container{
+    display:grid;
+    grid-template-columns:350px 1fr;
+    height:calc(100vh - 80px);
+}
+
+.sidebar{
+    border-right:1px solid #334155;
+    overflow:auto;
+    padding:15px;
+}
+
+.content{
+    overflow:auto;
+    padding:20px;
+}
+
+input,select{
     width:100%;
     padding:10px;
-    font-size:16px;
+    margin-bottom:10px;
+    border-radius:6px;
+    border:none;
 }
 
-.problem{
-    border:1px solid #ccc;
+.card{
+    background:#1e293b;
     padding:10px;
-    margin:6px 0;
+    margin-bottom:8px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.card:hover{
+    background:#334155;
 }
 
 .title{
     font-weight:bold;
 }
+
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    background:#2563eb;
+    border-radius:999px;
+    margin-right:5px;
+    font-size:12px;
+}
+
+.stats{
+    margin-bottom:20px;
+}
+
+h2{
+    margin-top:0;
+}
+
+pre{
+    white-space:pre-wrap;
+    word-wrap:break-word;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>P vs NP Studio</h1>
+<header>
+    <h1>P vs NP Studio</h1>
+</header>
 
-<div id="stats"></div>
+<div class="container">
 
-<input id="search" placeholder="Search problems...">
+    <div class="sidebar">
 
-<div id="results"></div>
+        <div class="stats" id="stats"></div>
 
-<script>
+        <input
+            id="search"
+            placeholder="Search problems..."
+        >
 
-let catalog = null;
+        <select id="category">
+            <option value="all">All Categories</option>
+            <option value="database_problems">Database Problems</option>
+            <option value="flow_problems">Flow Problems</option>
+            <option value="graph_theory">Graph Theory</option>
+            <option value="network_design">Network Design</option>
+        </select>
 
-fetch("catalog.json")
-.then(r => r.json())
-.then(data => {
+        <div id="results"></div>
 
-    catalog = data;
+    </div>
 
-    document.getElementById("stats").innerHTML =
-        `
-        <p>
-        Total Problems: ${data.totalProblems}
-        </p>
-        `;
+    <div class="content">
 
-    render(data.problems);
-});
+        <div id="detail">
 
-function render(problems){
+            <h2>Select a Problem</h2>
 
-    let html = "";
+            <p>
+                Choose a problem from the list.
+            </p>
 
-    for(const p of problems){
-
-        html += `
-        <div class="problem">
-            <div class="title">${p.title}</div>
-            <div>${p.category}</div>
         </div>
-        `;
-    }
 
-    document.getElementById("results").innerHTML = html;
-}
+    </div>
 
-document.getElementById("search")
-.addEventListener("input", e => {
+</div>
 
-    if(!catalog) return;
-
-    const q = e.target.value.toLowerCase();
-
-    const filtered = catalog.problems.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        p.name.toLowerCase().includes(q)
-    );
-
-    render(filtered);
-});
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
