@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>P vs NP Universal Capability GUI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+<header>
+  <h1>P vs NP Universal Capability GUI</h1>
+  <p>Discovery-driven dashboard for the installed <code>p-vs-np</code> package.</p>
+</header>
+
+<main>
+  <aside class="panel sidebar">
+    <h2>Inventory</h2>
+    <div class="metrics">
+      <div><span id="moduleCount">0</span><label>Modules</label></div>
+      <div><span id="functionCount">0</span><label>Functions</label></div>
+      <div><span id="classCount">0</span><label>Classes</label></div>
+      <div><span id="capabilityCount">0</span><label>Capabilities</label></div>
+    </div>
+
+    <h2>Controls</h2>
+    <input id="search" placeholder="Search capability...">
+    <select id="categoryFilter">
+      <option value="all">All categories</option>
+    </select>
+    <select id="visualizerFilter">
+      <option value="all">All visualizers</option>
+    </select>
+    <button id="smokeBtn">Run No-Arg Smoke Test</button>
+
+    <h2>Capabilities</h2>
+    <div id="capabilityList"></div>
+  </aside>
+
+  <section class="panel workspace">
+    <h2 id="selectedName">Select a capability</h2>
+    <div id="badges"></div>
+
+    <h3>Signature</h3>
+    <pre id="signature"></pre>
+
+    <h3>Documentation</h3>
+    <pre id="doc"></pre>
+
+    <h3>Runner</h3>
+    <p class="small">Arguments must be JSON arrays. Keyword arguments must be a JSON object.</p>
+    <textarea id="argsInput" placeholder='Args JSON, e.g. [[[0,1],[1,0]], 2]'></textarea>
+    <textarea id="kwargsInput" placeholder='Kwargs JSON, e.g. {"k": 3}'></textarea>
+    <button id="runBtn">Run Selected</button>
+    <pre id="runOutput"></pre>
+
+    <h3>Capability Map</h3>
+    <div id="map"></div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
